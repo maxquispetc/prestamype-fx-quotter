@@ -1,14 +1,11 @@
 <template>
   <div id="app">
-    <h1>Prestamype FX Quotter</h1>
-    <p>Cotizador de divisas USD/PEN</p>
+    <QuoteView />
   </div>
-
-  <h1 class="text-3xl font-bold text-blue-500">Hola Tailwind</h1>
 </template>
 
 <script setup lang="ts">
-// Componente principal de la aplicación
+import QuoteView from "@/views/QuoteView.vue";
 </script>
 
 <style scoped>
@@ -16,8 +13,5 @@
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
 }
 </style>
