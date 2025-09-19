@@ -141,6 +141,13 @@
         </button>
       </div>
     </div>
+
+    <!-- Botón "Iniciar operación" -->
+    <button
+      class="w-full bg-[#653fd9] text-white py-4 rounded-lg font-semibold text-lg shadow-md hover:bg-opacity-90 focus:outline-none focus:ring-2 focus:ring-[#653fd9] focus:ring-offset-2 transition-colors"
+    >
+      Iniciar operación
+    </button>
   </div>
 </template>
 
