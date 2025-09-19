@@ -58,9 +58,11 @@
     </div>
 
     <!-- Inputs de conversión -->
-    <div class="space-y-6 mb-8">
+    <div class="relative mb-8">
       <!-- Dólares -->
-      <div class="flex items-center justify-between bg-gray-50 rounded-xl p-4">
+      <div
+        class="flex items-center justify-between bg-gray-50 rounded-xl p-4 mb-4"
+      >
         <div class="bg-gray-100 px-4 py-2 rounded-full">
           <label for="dollars-input" class="text-sm font-medium text-gray-700"
             >Dólares</label
@@ -69,6 +71,7 @@
         <div class="text-right flex-1 ml-4">
           <p class="text-xs text-gray-500 mb-1">Envías</p>
           <input
+            ref="dollarsInput"
             id="dollars-input"
             v-model="dollarsAmount"
             type="text"
@@ -84,7 +87,9 @@
       </div>
 
       <!-- Soles -->
-      <div class="flex items-center justify-between bg-gray-50 rounded-xl p-4">
+      <div
+        class="flex items-center justify-between bg-gray-50 rounded-xl p-4 mt-4"
+      >
         <div class="bg-gray-100 px-4 py-2 rounded-full">
           <label for="soles-input" class="text-sm font-medium text-gray-700"
             >Soles</label
@@ -93,6 +98,7 @@
         <div class="text-right flex-1 ml-4">
           <p class="text-xs text-gray-500 mb-1">Recibes</p>
           <input
+            ref="solesInput"
             id="soles-input"
             v-model="solesAmount"
             type="text"
@@ -105,6 +111,34 @@
             @input="normalizeInput"
           />
         </div>
+      </div>
+
+      <!-- Swap Button - Posicionado absolutamente en el centro -->
+      <div
+        class="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 z-20"
+      >
+        <button
+          ref="swapButton"
+          @click="handleSwap"
+          @keydown.enter="handleSwap"
+          @keydown.space.prevent="handleSwap"
+          class="w-12 h-12 bg-[#653fd9] rounded-full flex items-center justify-center shadow-lg hover:bg-opacity-90 focus:outline-none focus:ring-2 focus:ring-[#653fd9] focus:ring-offset-2 transition-all duration-200 hover:scale-105"
+          aria-label="Intercambiar monedas"
+        >
+          <svg
+            class="w-5 h-5 text-white"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2.5"
+              d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"
+            ></path>
+          </svg>
+        </button>
       </div>
     </div>
   </div>
@@ -122,6 +156,11 @@ const { purchase_price, sale_price, loading, error } = storeToRefs(ratesStore);
 // Estados de los inputs
 const dollarsAmount = ref("");
 const solesAmount = ref("");
+
+// Referencias para manejo de foco
+const dollarsInput = ref<HTMLInputElement>();
+const solesInput = ref<HTMLInputElement>();
+const swapButton = ref<HTMLButtonElement>();
 
 // Formatear tasa a 4 decimales
 function formatRate(rate: number): string {
@@ -148,5 +187,17 @@ function normalizeInput(event: Event): void {
   } else if (target.id === "soles-input") {
     solesAmount.value = value;
   }
+}
+
+// Manejar intercambio de monedas
+function handleSwap(): void {
+  // TODO(issue #5): aplicar fórmulas de conversión usando purchase_price y sale_price
+  console.log("Swap clicked - implementar en Issue 5");
+
+  // Preparar manejo de foco tras el swap
+  // Por ahora, enfocar el input de dólares
+  setTimeout(() => {
+    dollarsInput.value?.focus();
+  }, 100);
 }
 </script>
