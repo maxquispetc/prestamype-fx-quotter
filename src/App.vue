@@ -3,6 +3,8 @@
     <h1>Prestamype FX Quotter</h1>
     <p>Cotizador de divisas USD/PEN</p>
   </div>
+
+  <h1 class="text-3xl font-bold text-blue-500">Hola Tailwind</h1>
 </template>
 
 <script setup lang="ts">
