@@ -36,7 +36,7 @@
       <div v-else class="flex justify-between items-center">
         <!-- Dólar compra (activo) -->
         <div class="text-center flex-1">
-          <p class="text-sm text-gray-600 mb-2">Dólar compra</p>
+          <p class="text-sm text-[#653fd9] mb-2">Dólar compra</p>
           <div class="relative">
             <p class="text-2xl font-bold text-[#653fd9]">
               {{ formatRate(purchase_price) }}
@@ -61,14 +61,16 @@
     <div class="relative mb-8">
       <!-- Dólares -->
       <div
-        class="flex items-center justify-between bg-gray-50 rounded-xl p-4 mb-4"
+        class="flex items-center bg-white rounded-xl mb-4 border border-[#653fd9] overflow-hidden"
       >
-        <div class="bg-gray-100 px-4 py-2 rounded-full">
-          <label for="dollars-input" class="text-sm font-medium text-gray-700"
+        <div
+          class="bg-gray-100 px-4 py-5 rounded-l-xl flex items-center justify-center w-2/5"
+        >
+          <label for="dollars-input" class="text-l font-medium text-[#653fd9]"
             >Dólares</label
           >
         </div>
-        <div class="text-right flex-1 ml-4">
+        <div class="text-right flex-1 px-4 py-2">
           <p class="text-xs text-gray-500 mb-1">Envías</p>
           <input
             ref="dollarsInput"
@@ -88,14 +90,16 @@
 
       <!-- Soles -->
       <div
-        class="flex items-center justify-between bg-gray-50 rounded-xl p-4 mt-4"
+        class="flex items-center bg-white rounded-xl mt-4 border border-[#653fd9] overflow-hidden"
       >
-        <div class="bg-gray-100 px-4 py-2 rounded-full">
-          <label for="soles-input" class="text-sm font-medium text-gray-700"
+        <div
+          class="bg-gray-100 px-4 py-5 rounded-l-xl flex items-center justify-center w-2/5"
+        >
+          <label for="soles-input" class="text-l font-medium text-[#653fd9]"
             >Soles</label
           >
         </div>
-        <div class="text-right flex-1 ml-4">
+        <div class="text-right flex-1 px-4 py-2">
           <p class="text-xs text-gray-500 mb-1">Recibes</p>
           <input
             ref="solesInput"

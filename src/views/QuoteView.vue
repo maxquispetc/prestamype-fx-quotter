@@ -4,10 +4,12 @@
     <div class="flex-1 flex items-center justify-center p-8 md:p-12">
       <div class="text-white text-center md:text-left">
         <h1 class="text-4xl md:text-6xl font-bold mb-4">
-          El mejor tipo de cambio
+          El mejor<br />
+          tipo de cambio
         </h1>
         <p class="text-xl md:text-2xl font-light">
-          para cambiar dólares y soles online en Perú
+          para cambiar dólares y soles<br />
+          online en Perú
         </p>
       </div>
     </div>
