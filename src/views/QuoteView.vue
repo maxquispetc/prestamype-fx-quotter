@@ -12,9 +12,13 @@
       </div>
     </div>
 
-    <!-- Sección derecha - Placeholder del cotizador -->
+    <!-- Sección derecha - QuoteCard -->
     <div class="flex-1 flex items-center justify-center p-8 md:p-12">
-      <!-- Aquí irá el QuoteCard en el siguiente commit -->
+      <QuoteCard />
     </div>
   </div>
 </template>
+
+<script setup lang="ts">
+import QuoteCard from "@/components/QuoteCard.vue";
+</script>
