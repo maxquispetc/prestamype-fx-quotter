@@ -152,7 +152,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, onMounted, onUnmounted } from "vue";
 import { storeToRefs } from "pinia";
 import { useRatesStore } from "@/stores/rates";
 
@@ -168,6 +168,17 @@ const solesAmount = ref("");
 const dollarsInput = ref<HTMLInputElement>();
 const solesInput = ref<HTMLInputElement>();
 const swapButton = ref<HTMLButtonElement>();
+
+// Lifecycle hooks para manejo de suscripción
+onMounted(() => {
+  ratesStore.start();
+});
+
+onUnmounted(() => {
+  if (ratesStore.isSubscribed) {
+    ratesStore.stop();
+  }
+});
 
 // Formatear tasa a 4 decimales
 function formatRate(rate: number): string {
@@ -198,7 +209,7 @@ function normalizeInput(event: Event): void {
 
 // Manejar intercambio de monedas
 function handleSwap(): void {
-  // TODO(issue #5): aplicar fórmulas de conversión usando purchase_price y sale_price
+  // TODO(issue #5): aplicar conversiones usando purchase_price y sale_price
   console.log("Swap clicked - implementar en Issue 5");
 
   // Preparar manejo de foco tras el swap
