@@ -234,8 +234,7 @@ import { formatAmount } from "@/services/number";
 
 const inputSizeTight = computed(() => {
   const txt = (currentInputValue.value || "0.00").toString();
-  // sin +1 para no dejar aire extra
-  return Math.min(18, Math.max(1, txt.length));
+  return Math.min(18, Math.max(3, txt.length));
 });
 
 // Stores
