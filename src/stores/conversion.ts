@@ -19,6 +19,7 @@ export const useConversionStore = defineStore("conversion", () => {
   // Getters
   /**
    * Calcula el resultado de conversión basado en el modo actual y las tasas disponibles
+   * Endurecido: entradas vacías/no numéricas → 0, no negativos, manejo de errores
    */
   const result = computed<number>(() => {
     if (!ratesStore.hasRates) return 0;
@@ -26,9 +27,11 @@ export const useConversionStore = defineStore("conversion", () => {
     try {
       if (mode.value === "PEN_TO_USD") {
         const penAmount = clampMin(toNumberSafe(penInput.value));
+        if (penAmount === 0) return 0; // Entrada vacía/no numérica
         return penToUsd(penAmount, ratesStore.sale_price, decimals.value);
       } else {
         const usdAmount = clampMin(toNumberSafe(usdInput.value));
+        if (usdAmount === 0) return 0; // Entrada vacía/no numérica
         return usdToPen(usdAmount, ratesStore.purchase_price, decimals.value);
       }
     } catch (error) {
@@ -67,6 +70,33 @@ export const useConversionStore = defineStore("conversion", () => {
    * Indica si se debe mostrar la notificación de tasas actualizadas
    */
   const showRatesUpdated = computed<boolean>(() => ratesUpdated.value);
+
+  /**
+   * Indica si hay tasas inválidas (≤ 0)
+   */
+  const hasInvalidRates = computed<boolean>(() => {
+    return (
+      ratesStore.hasRates &&
+      (ratesStore.purchase_price <= 0 || ratesStore.sale_price <= 0)
+    );
+  });
+
+  /**
+   * Mensaje de error para tasas inválidas
+   */
+  const ratesErrorMessage = computed<string>(() => {
+    if (!hasInvalidRates.value) return "";
+
+    const errors = [];
+    if (ratesStore.purchase_price <= 0) {
+      errors.push("Precio de compra inválido");
+    }
+    if (ratesStore.sale_price <= 0) {
+      errors.push("Precio de venta inválido");
+    }
+
+    return errors.join(", ");
+  });
 
   // Actions
   /**
@@ -210,6 +240,8 @@ export const useConversionStore = defineStore("conversion", () => {
     currentInput,
     oppositeInput,
     showRatesUpdated,
+    hasInvalidRates,
+    ratesErrorMessage,
 
     // Actions
     setMode,

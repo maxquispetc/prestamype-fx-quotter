@@ -90,6 +90,16 @@
           </div>
         </div>
       </div>
+
+      <!-- Aviso helper-text para tasas inválidas -->
+      <div
+        v-if="hasInvalidRates"
+        class="mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded-lg"
+      >
+        <p class="text-yellow-700 text-sm">
+          ⚠️ {{ ratesErrorMessage }}. Las conversiones pueden no ser precisas.
+        </p>
+      </div>
     </div>
 
     <!-- Inputs de conversión -->
@@ -116,7 +126,7 @@
             v-model="currentInputValue"
             type="text"
             inputmode="decimal"
-            placeholder="0.0000"
+            placeholder="0.00"
             class="text-xl font-bold text-gray-900 bg-transparent border-none outline-none w-full text-right"
             :class="{ 'text-red-500': !isValidAmount(currentInputValue) }"
             :aria-invalid="!isValidAmount(currentInputValue)"
@@ -202,32 +212,45 @@ import { formatAmount } from "@/services/number";
 const ratesStore = useRatesStore();
 const conversionStore = useConversionStore();
 const { purchase_price, sale_price, loading, error } = storeToRefs(ratesStore);
-const { mode, penInput, usdInput, result, hasResult, showRatesUpdated } =
-  storeToRefs(conversionStore);
+const {
+  mode,
+  penInput,
+  usdInput,
+  result,
+  hasResult,
+  showRatesUpdated,
+  hasInvalidRates,
+  ratesErrorMessage,
+} = storeToRefs(conversionStore);
 
 // Referencias para manejo de foco
 const dollarsInput = ref<HTMLInputElement>();
 const solesInput = ref<HTMLInputElement>();
 const swapButton = ref<HTMLButtonElement>();
 
-// Debounce timer
+// Debounce timer optimizado
 let debounceTimer: NodeJS.Timeout | null = null;
+let lastInputValue = ""; // Cache para evitar recomputos redundantes
 
-// Computed properties
+// Computed properties optimizados
 const currentInputValue = computed({
   get: () => (mode.value === "PEN_TO_USD" ? penInput.value : usdInput.value),
   set: (value: string) => {
-    if (mode.value === "PEN_TO_USD") {
-      conversionStore.setPenInput(value);
-    } else {
-      conversionStore.setUsdInput(value);
+    // Solo actualizar si el valor realmente cambió
+    if (value !== lastInputValue) {
+      lastInputValue = value;
+      if (mode.value === "PEN_TO_USD") {
+        conversionStore.setPenInput(value);
+      } else {
+        conversionStore.setUsdInput(value);
+      }
     }
   },
 });
 
 const formattedResult = computed(() => {
-  if (!hasResult.value) return "0.0000";
-  return formatAmount(result.value, 4);
+  if (!hasResult.value) return "0.00"; // Siempre 2 decimales por defecto
+  return formatAmount(result.value, conversionStore.decimals);
 });
 
 // Lifecycle hooks para manejo de suscripción
@@ -259,23 +282,28 @@ function isValidAmount(value: string): boolean {
   return regex.test(value);
 }
 
-// Manejar cambios en el input con debounce
+// Manejar cambios en el input con debounce optimizado
 function handleInputChange(event: Event): void {
   const target = event.target as HTMLInputElement;
   const value = target.value.replace(/,/g, ".");
 
+  // Solo procesar si el valor realmente cambió
+  if (value === lastInputValue) return;
+
   // Actualizar inmediatamente para UI responsiva
   currentInputValue.value = value;
 
-  // Debounce para evitar recomputos excesivos
+  // Debounce optimizado para evitar recomputos excesivos
   if (debounceTimer) {
     clearTimeout(debounceTimer);
   }
 
   debounceTimer = setTimeout(() => {
-    // Sincronizar con el store después del debounce
-    conversionStore.syncWithRates();
-  }, 200);
+    // Solo sincronizar si hay un valor válido y tasas disponibles
+    if (value && ratesStore.hasRates && !hasInvalidRates.value) {
+      conversionStore.syncWithRates();
+    }
+  }, 150); // Reducido a 150ms para mejor responsividad
 }
 
 // Manejar intercambio de monedas
