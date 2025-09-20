@@ -142,7 +142,7 @@
               inputmode="decimal"
               placeholder="0.00"
               :size="inputSizeTight"
-              class="flex-none inline-block -ml-[10px] text-xl font-bold font-mono tabular-nums bg-transparent border-0 outline-none text-right placeholder-gray-400 p-0 m-0 leading-none"
+              class="flex-none inline-block text-xl font-bold font-mono tabular-nums bg-transparent border-0 outline-none text-right placeholder-gray-400 p-0 m-0 leading-none"
               :class="{ 'text-red-500': !isValidAmount(currentInputValue) }"
               :aria-invalid="!isValidAmount(currentInputValue)"
               :aria-label="`Cantidad en ${
