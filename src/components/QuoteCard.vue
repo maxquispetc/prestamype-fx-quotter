@@ -3,7 +3,7 @@
     class="bg-white rounded-xl shadow-lg p-8 w-full max-w-md mx-auto md:mx-0"
   >
     <!-- Header de tasas -->
-    <div class="mb-8">
+    <div>
       <!-- Estados de loading/error -->
       <div v-if="loading" class="animate-pulse">
         <div class="flex justify-between items-center">
@@ -32,92 +32,162 @@
         </button>
       </div>
 
+      <!-- Notificación de tasas actualizadas -->
+      <div
+        v-if="showRatesUpdated"
+        class="mb-4 p-3 bg-green-50 border border-green-200 rounded-lg text-center"
+      >
+        <p class="text-green-600 text-sm font-medium">Tasas actualizadas</p>
+      </div>
+
       <!-- Tasas normales -->
       <div v-else class="flex justify-between items-center">
-        <!-- Dólar compra (activo) -->
+        <!-- Dólar compra (activo cuando mode === 'USD_TO_PEN') -->
         <div class="text-center flex-1">
-          <p class="text-sm text-[#653fd9] mb-2">Dólar compra</p>
+          <p
+            class="text-sm mb-0"
+            :class="mode === 'USD_TO_PEN' ? 'text-[#653fd9]' : 'text-gray-600'"
+          >
+            Dólar compra
+          </p>
           <div class="relative">
-            <p class="text-2xl font-bold text-[#653fd9]">
+            <p
+              class="text-l font-bold pb-1.5"
+              :class="
+                mode === 'USD_TO_PEN' ? 'text-[#653fd9]' : 'text-gray-400'
+              "
+            >
               {{ formatRate(purchase_price) }}
             </p>
             <div
-              class="absolute bottom-0 left-0 right-0 h-0.5 bg-[#653fd9]"
+              v-if="mode === 'USD_TO_PEN'"
+              class="absolute bottom-0 left-0 right-0 mx-auto w-1/2 h-0.5 bg-[#653fd9]"
             ></div>
           </div>
         </div>
 
-        <!-- Dólar venta (inactivo) -->
+        <!-- Dólar venta (activo cuando mode === 'PEN_TO_USD') -->
         <div class="text-center flex-1">
-          <p class="text-sm text-gray-600 mb-2">Dólar venta</p>
-          <p class="text-2xl font-bold text-gray-400">
-            {{ formatRate(sale_price) }}
+          <p
+            class="text-sm mb-0"
+            :class="mode === 'PEN_TO_USD' ? 'text-[#653fd9]' : 'text-gray-600'"
+          >
+            Dólar venta
           </p>
+          <div class="relative">
+            <p
+              class="text-l font-bold pb-1.5"
+              :class="
+                mode === 'PEN_TO_USD' ? 'text-[#653fd9]' : 'text-gray-400'
+              "
+            >
+              {{ formatRate(sale_price) }}
+            </p>
+            <div
+              v-if="mode === 'PEN_TO_USD'"
+              class="absolute bottom-0 left-0 right-0 mx-auto w-1/2 h-0.5 bg-[#653fd9]"
+            ></div>
+          </div>
         </div>
+      </div>
+
+      <!-- Aviso helper-text para tasas inválidas -->
+      <div
+        v-if="hasInvalidRates"
+        class="mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded-lg"
+      >
+        <p class="text-yellow-700 text-sm">
+          ⚠️ {{ ratesErrorMessage }}. Las conversiones pueden no ser precisas.
+        </p>
       </div>
     </div>
 
+    <!-- Línea divisoria -->
+    <div class="h-px bg-gray-200 mb-8 -mx-8 mt-0"></div>
+
     <!-- Inputs de conversión -->
-    <div class="relative mb-8">
-      <!-- Dólares -->
+    <div class="relative mt-12 mb-14 max-w-[340px] w-full mx-auto">
+      <!-- Input principal según el modo -->
       <div
         class="flex items-center bg-white rounded-xl mb-4 border border-[#653fd9] overflow-hidden"
       >
         <div
           class="bg-gray-100 px-4 py-5 rounded-l-xl flex items-center justify-center w-2/5"
         >
-          <label for="dollars-input" class="text-l font-medium text-[#653fd9]"
-            >Dólares</label
+          <label
+            :for="mode === 'PEN_TO_USD' ? 'soles-input' : 'dollars-input'"
+            class="text-l font-medium text-[#653fd9]"
           >
+            {{ mode === "PEN_TO_USD" ? "Soles" : "Dólares" }}
+          </label>
         </div>
-        <div class="text-right flex-1 px-4 py-2">
+
+        <div class="text-right flex-1 px-4 py-2 min-w-0">
           <p class="text-xs text-gray-500 mb-1">Envías</p>
-          <input
-            ref="dollarsInput"
-            id="dollars-input"
-            v-model="dollarsAmount"
-            type="text"
-            inputmode="decimal"
-            placeholder="0.0000"
-            class="text-xl font-bold text-gray-900 bg-transparent border-none outline-none w-full text-right"
-            :class="{ 'text-red-500': !isValidAmount(dollarsAmount) }"
-            :aria-invalid="!isValidAmount(dollarsAmount)"
-            aria-label="Cantidad en dólares"
-            @input="normalizeInput"
-          />
+
+          <div
+            class="flex items-center justify-end gap-0 min-w-0 whitespace-nowrap"
+          >
+            <span
+              class="text-xl font-bold text-gray-900 font-mono tabular-nums"
+            >
+              {{ mode === "PEN_TO_USD" ? "S/" : "$" }}
+            </span>
+
+            <input
+              :ref="mode === 'PEN_TO_USD' ? 'solesInput' : 'dollarsInput'"
+              :id="mode === 'PEN_TO_USD' ? 'soles-input' : 'dollars-input'"
+              v-model="currentInputValue"
+              type="text"
+              inputmode="decimal"
+              placeholder="0.00"
+              :size="inputSizeTight"
+              class="flex-none inline-block -ml-[10px] text-xl font-bold font-mono tabular-nums bg-transparent border-0 outline-none text-right placeholder-gray-400 p-0 m-0 leading-none"
+              :class="{ 'text-red-500': !isValidAmount(currentInputValue) }"
+              :aria-invalid="!isValidAmount(currentInputValue)"
+              :aria-label="`Cantidad en ${
+                mode === 'PEN_TO_USD' ? 'soles' : 'dólares'
+              }`"
+              @input="handleInputChange"
+            />
+          </div>
         </div>
       </div>
 
-      <!-- Soles -->
+      <!-- Input de salida (solo lectura) -->
       <div
         class="flex items-center bg-white rounded-xl mt-4 border border-[#653fd9] overflow-hidden"
       >
         <div
           class="bg-gray-100 px-4 py-5 rounded-l-xl flex items-center justify-center w-2/5"
         >
-          <label for="soles-input" class="text-l font-medium text-[#653fd9]"
-            >Soles</label
+          <label
+            :for="mode === 'PEN_TO_USD' ? 'dollars-output' : 'soles-output'"
+            class="text-l font-medium text-[#653fd9]"
           >
+            {{ mode === "PEN_TO_USD" ? "Dólares" : "Soles" }}
+          </label>
         </div>
-        <div class="text-right flex-1 px-4 py-2">
+
+        <div class="text-right flex-1 px-4 py-2 min-w-0">
           <p class="text-xs text-gray-500 mb-1">Recibes</p>
-          <input
-            ref="solesInput"
-            id="soles-input"
-            v-model="solesAmount"
-            type="text"
-            inputmode="decimal"
-            placeholder="0.0000"
-            class="text-xl font-bold text-gray-900 bg-transparent border-none outline-none w-full text-right"
-            :class="{ 'text-red-500': !isValidAmount(solesAmount) }"
-            :aria-invalid="!isValidAmount(solesAmount)"
-            aria-label="Cantidad en soles"
-            @input="normalizeInput"
-          />
+
+          <div class="flex items-center justify-end gap-1 min-w-0">
+            <span class="text-xl font-bold text-gray-900">
+              {{ mode === "PEN_TO_USD" ? "$" : "S/" }}
+            </span>
+
+            <div
+              :id="mode === 'PEN_TO_USD' ? 'dollars-output' : 'soles-output'"
+              class="text-xl font-bold text-gray-900 text-right truncate"
+            >
+              {{ formattedResult }}
+            </div>
+          </div>
         </div>
       </div>
 
-      <!-- Swap Button - Posicionado absolutamente en el centro -->
+      <!-- Swap Button -->
       <div
         class="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 z-20"
       >
@@ -148,7 +218,7 @@
 
     <!-- Botón "Iniciar operación" -->
     <button
-      class="w-full bg-[#653fd9] text-white py-4 rounded-lg font-semibold text-lg shadow-md hover:bg-opacity-90 focus:outline-none focus:ring-2 focus:ring-[#653fd9] focus:ring-offset-2 transition-colors"
+      class="w-full max-w-[340px] mx-auto block bg-[#653fd9] text-white py-4 rounded-lg font-semibold text-lg shadow-md hover:bg-opacity-90 focus:outline-none focus:ring-2 focus:ring-[#653fd9] focus:ring-offset-2 transition-colors"
     >
       Iniciar operación
     </button>
@@ -156,22 +226,62 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from "vue";
+import { ref, computed, onMounted, onUnmounted } from "vue";
 import { storeToRefs } from "pinia";
 import { useRatesStore } from "@/stores/rates";
+import { useConversionStore } from "@/stores/conversion";
+import { formatAmount } from "@/services/number";
 
-// Store de tasas
+const inputSizeTight = computed(() => {
+  const txt = (currentInputValue.value || "0.00").toString();
+  // sin +1 para no dejar aire extra
+  return Math.min(18, Math.max(1, txt.length));
+});
+
+// Stores
 const ratesStore = useRatesStore();
+const conversionStore = useConversionStore();
 const { purchase_price, sale_price, loading, error } = storeToRefs(ratesStore);
-
-// Estados de los inputs
-const dollarsAmount = ref("");
-const solesAmount = ref("");
+const {
+  mode,
+  penInput,
+  usdInput,
+  result,
+  hasResult,
+  showRatesUpdated,
+  hasInvalidRates,
+  ratesErrorMessage,
+} = storeToRefs(conversionStore);
 
 // Referencias para manejo de foco
 const dollarsInput = ref<HTMLInputElement>();
 const solesInput = ref<HTMLInputElement>();
 const swapButton = ref<HTMLButtonElement>();
+
+// Debounce timer optimizado
+let debounceTimer: NodeJS.Timeout | null = null;
+let lastInputValue = ""; // Cache para evitar recomputos redundantes
+
+// Computed properties optimizados
+const currentInputValue = computed({
+  get: () => (mode.value === "PEN_TO_USD" ? penInput.value : usdInput.value),
+  set: (value: string) => {
+    // Solo actualizar si el valor realmente cambió
+    if (value !== lastInputValue) {
+      lastInputValue = value;
+      if (mode.value === "PEN_TO_USD") {
+        conversionStore.setPenInput(value);
+      } else {
+        conversionStore.setUsdInput(value);
+      }
+    }
+  },
+});
+
+const formattedResult = computed(() => {
+  if (!hasResult.value) return "0.00"; // Siempre 2 decimales por defecto
+  return formatAmount(result.value, conversionStore.decimals);
+});
 
 // Lifecycle hooks para manejo de suscripción
 onMounted(() => {
@@ -181,6 +291,9 @@ onMounted(() => {
 onUnmounted(() => {
   if (ratesStore.isSubscribed) {
     ratesStore.stop();
+  }
+  if (debounceTimer) {
+    clearTimeout(debounceTimer);
   }
 });
 
@@ -199,27 +312,42 @@ function isValidAmount(value: string): boolean {
   return regex.test(value);
 }
 
-// Normalizar input: convertir comas a puntos
-function normalizeInput(event: Event): void {
+// Manejar cambios en el input con debounce optimizado
+function handleInputChange(event: Event): void {
   const target = event.target as HTMLInputElement;
   const value = target.value.replace(/,/g, ".");
 
-  if (target.id === "dollars-input") {
-    dollarsAmount.value = value;
-  } else if (target.id === "soles-input") {
-    solesAmount.value = value;
+  // Solo procesar si el valor realmente cambió
+  if (value === lastInputValue) return;
+
+  // Actualizar inmediatamente para UI responsiva
+  currentInputValue.value = value;
+
+  // Debounce optimizado para evitar recomputos excesivos
+  if (debounceTimer) {
+    clearTimeout(debounceTimer);
   }
+
+  debounceTimer = setTimeout(() => {
+    // Solo sincronizar si hay un valor válido y tasas disponibles
+    if (value && ratesStore.hasRates && !hasInvalidRates.value) {
+      conversionStore.syncWithRates();
+    }
+  }, 150); // Reducido a 150ms para mejor responsividad
 }
 
 // Manejar intercambio de monedas
 function handleSwap(): void {
-  // TODO(issue #5): aplicar conversiones usando purchase_price y sale_price
-  console.log("Swap clicked - implementar en Issue 5");
+  conversionStore.swapMode();
 
   // Preparar manejo de foco tras el swap
-  // Por ahora, enfocar el input de dólares
   setTimeout(() => {
-    dollarsInput.value?.focus();
+    const activeInput =
+      mode.value === "PEN_TO_USD" ? solesInput.value : dollarsInput.value;
+    activeInput?.focus();
   }, 100);
 }
+
+// Los watchers de tasas están en el store de conversión
+// La vista solo lee getters, no fuerza v-model ni modifica inputs del usuario
 </script>
