@@ -55,10 +55,14 @@ export const useRatesStore = defineStore("rates", {
      * Inicia la suscripción a las tasas de cambio en tiempo real
      */
     async start(): Promise<void> {
-      // Evitar múltiples suscripciones
+      // Si ya hay una suscripción activa, cerrarla primero para evitar múltiples suscripciones
       if (this.isSubscribed) {
-        console.warn("[RatesStore] Ya hay una suscripción activa");
-        return;
+        if (import.meta.env.DEV) {
+          console.log(
+            "[RatesStore] Cerrando suscripción anterior antes de iniciar nueva"
+          );
+        }
+        this.stop();
       }
 
       try {
@@ -83,20 +87,29 @@ export const useRatesStore = defineStore("rates", {
             // Manejar errores
             this.error = error.message;
             this.loading = false;
-            console.error("[RatesStore] Error en suscripción:", error.message);
+            if (import.meta.env.DEV) {
+              console.error(
+                "[RatesStore] Error en suscripción:",
+                error.message
+              );
+            }
           }
         );
 
-        console.log("[RatesStore] Suscripción iniciada para:", docPath);
+        if (import.meta.env.DEV) {
+          console.log("[RatesStore] Suscripción iniciada para:", docPath);
+        }
       } catch (error) {
         const errorMessage =
           error instanceof Error ? error.message : "Error desconocido";
         this.error = errorMessage;
         this.loading = false;
-        console.error(
-          "[RatesStore] Error al iniciar suscripción:",
-          errorMessage
-        );
+        if (import.meta.env.DEV) {
+          console.error(
+            "[RatesStore] Error al iniciar suscripción:",
+            errorMessage
+          );
+        }
       }
     },
 
@@ -107,7 +120,9 @@ export const useRatesStore = defineStore("rates", {
       if (this._unsub) {
         this._unsub();
         this._unsub = null;
-        console.log("[RatesStore] Suscripción detenida");
+        if (import.meta.env.DEV) {
+          console.log("[RatesStore] Suscripción detenida");
+        }
       }
 
       // Limpiar estado
