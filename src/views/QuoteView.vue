@@ -22,5 +22,21 @@
 </template>
 
 <script setup lang="ts">
+import { onMounted, onUnmounted } from "vue";
 import QuoteCard from "@/components/QuoteCard.vue";
+import { useRatesStore } from "@/stores/rates";
+
+// Stores
+const ratesStore = useRatesStore();
+
+// Lifecycle hooks para manejo de suscripción
+onMounted(() => {
+  ratesStore.start();
+});
+
+onUnmounted(() => {
+  if (ratesStore.isSubscribed) {
+    ratesStore.stop();
+  }
+});
 </script>

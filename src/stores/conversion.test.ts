@@ -1,7 +1,6 @@
 import { describe, it, expect, beforeEach, vi } from "vitest";
 import { setActivePinia, createPinia } from "pinia";
 import { useConversionStore } from "@/stores/conversion";
-import { useRatesStore } from "@/stores/rates";
 
 // Mock del store de rates
 vi.mock("@/stores/rates", () => ({
