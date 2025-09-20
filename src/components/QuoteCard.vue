@@ -3,7 +3,7 @@
     class="bg-white rounded-xl shadow-lg p-8 w-full max-w-md mx-auto md:mx-0"
   >
     <!-- Header de tasas -->
-    <div class="mb-8">
+    <div>
       <!-- Estados de loading/error -->
       <div v-if="loading" class="animate-pulse">
         <div class="flex justify-between items-center">
@@ -45,14 +45,14 @@
         <!-- Dólar compra (activo cuando mode === 'USD_TO_PEN') -->
         <div class="text-center flex-1">
           <p
-            class="text-sm mb-2"
+            class="text-sm mb-0"
             :class="mode === 'USD_TO_PEN' ? 'text-[#653fd9]' : 'text-gray-600'"
           >
             Dólar compra
           </p>
           <div class="relative">
             <p
-              class="text-2xl font-bold"
+              class="text-l font-bold pb-1.5"
               :class="
                 mode === 'USD_TO_PEN' ? 'text-[#653fd9]' : 'text-gray-400'
               "
@@ -61,7 +61,7 @@
             </p>
             <div
               v-if="mode === 'USD_TO_PEN'"
-              class="absolute bottom-0 left-0 right-0 h-0.5 bg-[#653fd9]"
+              class="absolute bottom-0 left-0 right-0 mx-auto w-1/2 h-0.5 bg-[#653fd9]"
             ></div>
           </div>
         </div>
@@ -69,14 +69,14 @@
         <!-- Dólar venta (activo cuando mode === 'PEN_TO_USD') -->
         <div class="text-center flex-1">
           <p
-            class="text-sm mb-2"
+            class="text-sm mb-0"
             :class="mode === 'PEN_TO_USD' ? 'text-[#653fd9]' : 'text-gray-600'"
           >
             Dólar venta
           </p>
           <div class="relative">
             <p
-              class="text-2xl font-bold"
+              class="text-l font-bold pb-1.5"
               :class="
                 mode === 'PEN_TO_USD' ? 'text-[#653fd9]' : 'text-gray-400'
               "
@@ -85,7 +85,7 @@
             </p>
             <div
               v-if="mode === 'PEN_TO_USD'"
-              class="absolute bottom-0 left-0 right-0 h-0.5 bg-[#653fd9]"
+              class="absolute bottom-0 left-0 right-0 mx-auto w-1/2 h-0.5 bg-[#653fd9]"
             ></div>
           </div>
         </div>
@@ -102,8 +102,11 @@
       </div>
     </div>
 
+    <!-- Línea divisoria -->
+    <div class="h-px bg-gray-200 mb-8 -mx-8 mt-0"></div>
+
     <!-- Inputs de conversión -->
-    <div class="relative mb-8">
+    <div class="relative mt-12 mb-14 max-w-[340px] w-full mx-auto">
       <!-- Input principal según el modo -->
       <div
         class="flex items-center bg-white rounded-xl mb-4 border border-[#653fd9] overflow-hidden"
@@ -118,23 +121,36 @@
             {{ mode === "PEN_TO_USD" ? "Soles" : "Dólares" }}
           </label>
         </div>
-        <div class="text-right flex-1 px-4 py-2">
+
+        <div class="text-right flex-1 px-4 py-2 min-w-0">
           <p class="text-xs text-gray-500 mb-1">Envías</p>
-          <input
-            :ref="mode === 'PEN_TO_USD' ? 'solesInput' : 'dollarsInput'"
-            :id="mode === 'PEN_TO_USD' ? 'soles-input' : 'dollars-input'"
-            v-model="currentInputValue"
-            type="text"
-            inputmode="decimal"
-            placeholder="0.00"
-            class="text-xl font-bold text-gray-900 bg-transparent border-none outline-none w-full text-right"
-            :class="{ 'text-red-500': !isValidAmount(currentInputValue) }"
-            :aria-invalid="!isValidAmount(currentInputValue)"
-            :aria-label="`Cantidad en ${
-              mode === 'PEN_TO_USD' ? 'soles' : 'dólares'
-            }`"
-            @input="handleInputChange"
-          />
+
+          <div
+            class="flex items-center justify-end gap-0 min-w-0 whitespace-nowrap"
+          >
+            <span
+              class="text-xl font-bold text-gray-900 font-mono tabular-nums"
+            >
+              {{ mode === "PEN_TO_USD" ? "S/" : "$" }}
+            </span>
+
+            <input
+              :ref="mode === 'PEN_TO_USD' ? 'solesInput' : 'dollarsInput'"
+              :id="mode === 'PEN_TO_USD' ? 'soles-input' : 'dollars-input'"
+              v-model="currentInputValue"
+              type="text"
+              inputmode="decimal"
+              placeholder="0.00"
+              :size="inputSizeTight"
+              class="flex-none inline-block -ml-[10px] text-xl font-bold font-mono tabular-nums bg-transparent border-0 outline-none text-right placeholder-gray-400 p-0 m-0 leading-none"
+              :class="{ 'text-red-500': !isValidAmount(currentInputValue) }"
+              :aria-invalid="!isValidAmount(currentInputValue)"
+              :aria-label="`Cantidad en ${
+                mode === 'PEN_TO_USD' ? 'soles' : 'dólares'
+              }`"
+              @input="handleInputChange"
+            />
+          </div>
         </div>
       </div>
 
@@ -152,18 +168,26 @@
             {{ mode === "PEN_TO_USD" ? "Dólares" : "Soles" }}
           </label>
         </div>
-        <div class="text-right flex-1 px-4 py-2">
+
+        <div class="text-right flex-1 px-4 py-2 min-w-0">
           <p class="text-xs text-gray-500 mb-1">Recibes</p>
-          <div
-            :id="mode === 'PEN_TO_USD' ? 'dollars-output' : 'soles-output'"
-            class="text-xl font-bold text-gray-900 w-full text-right"
-          >
-            {{ formattedResult }}
+
+          <div class="flex items-center justify-end gap-1 min-w-0">
+            <span class="text-xl font-bold text-gray-900">
+              {{ mode === "PEN_TO_USD" ? "$" : "S/" }}
+            </span>
+
+            <div
+              :id="mode === 'PEN_TO_USD' ? 'dollars-output' : 'soles-output'"
+              class="text-xl font-bold text-gray-900 text-right truncate"
+            >
+              {{ formattedResult }}
+            </div>
           </div>
         </div>
       </div>
 
-      <!-- Swap Button - Posicionado absolutamente en el centro -->
+      <!-- Swap Button -->
       <div
         class="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 z-20"
       >
@@ -194,7 +218,7 @@
 
     <!-- Botón "Iniciar operación" -->
     <button
-      class="w-full bg-[#653fd9] text-white py-4 rounded-lg font-semibold text-lg shadow-md hover:bg-opacity-90 focus:outline-none focus:ring-2 focus:ring-[#653fd9] focus:ring-offset-2 transition-colors"
+      class="w-full max-w-[340px] mx-auto block bg-[#653fd9] text-white py-4 rounded-lg font-semibold text-lg shadow-md hover:bg-opacity-90 focus:outline-none focus:ring-2 focus:ring-[#653fd9] focus:ring-offset-2 transition-colors"
     >
       Iniciar operación
     </button>
@@ -207,6 +231,12 @@ import { storeToRefs } from "pinia";
 import { useRatesStore } from "@/stores/rates";
 import { useConversionStore } from "@/stores/conversion";
 import { formatAmount } from "@/services/number";
+
+const inputSizeTight = computed(() => {
+  const txt = (currentInputValue.value || "0.00").toString();
+  // sin +1 para no dejar aire extra
+  return Math.min(18, Math.max(1, txt.length));
+});
 
 // Stores
 const ratesStore = useRatesStore();
