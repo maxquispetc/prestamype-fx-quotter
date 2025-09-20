@@ -14,6 +14,7 @@ export const useConversionStore = defineStore("conversion", () => {
   const penInput = ref<string>("");
   const usdInput = ref<string>("");
   const decimals = ref<number>(2);
+  const ratesUpdated = ref<boolean>(false); // Para mostrar notificación
 
   // Getters
   /**
@@ -61,6 +62,11 @@ export const useConversionStore = defineStore("conversion", () => {
   const oppositeInput = computed<string>(() => {
     return mode.value === "PEN_TO_USD" ? usdInput.value : penInput.value;
   });
+
+  /**
+   * Indica si se debe mostrar la notificación de tasas actualizadas
+   */
+  const showRatesUpdated = computed<boolean>(() => ratesUpdated.value);
 
   // Actions
   /**
@@ -138,27 +144,45 @@ export const useConversionStore = defineStore("conversion", () => {
     decimals.value = Math.max(0, Math.min(10, newDecimals)); // Limitar entre 0 y 10
   }
 
+  /**
+   * Muestra la notificación de tasas actualizadas por 1.5 segundos
+   */
+  function showRatesUpdatedNotification(): void {
+    ratesUpdated.value = true;
+    setTimeout(() => {
+      ratesUpdated.value = false;
+    }, 1500);
+  }
+
   // Watchers para reaccionar a cambios en las tasas
-  // Solo actualiza el resultado calculado, no modifica los inputs del usuario
+  // Solo actualiza el resultado calculado, NO modifica los inputs del usuario
   watch(
     () => ratesStore.purchase_price,
-    () => {
-      // El resultado se recalcula automáticamente via computed
-      console.log(
-        "[ConversionStore] Purchase price updated:",
-        ratesStore.purchase_price
-      );
+    (newPrice, oldPrice) => {
+      // Solo mostrar notificación si hay un cambio real y las tasas están disponibles
+      if (
+        ratesStore.hasRates &&
+        newPrice !== oldPrice &&
+        oldPrice !== undefined
+      ) {
+        console.log("[ConversionStore] Purchase price updated:", newPrice);
+        showRatesUpdatedNotification();
+      }
     }
   );
 
   watch(
     () => ratesStore.sale_price,
-    () => {
-      // El resultado se recalcula automáticamente via computed
-      console.log(
-        "[ConversionStore] Sale price updated:",
-        ratesStore.sale_price
-      );
+    (newPrice, oldPrice) => {
+      // Solo mostrar notificación si hay un cambio real y las tasas están disponibles
+      if (
+        ratesStore.hasRates &&
+        newPrice !== oldPrice &&
+        oldPrice !== undefined
+      ) {
+        console.log("[ConversionStore] Sale price updated:", newPrice);
+        showRatesUpdatedNotification();
+      }
     }
   );
 
@@ -185,6 +209,7 @@ export const useConversionStore = defineStore("conversion", () => {
     hasResult,
     currentInput,
     oppositeInput,
+    showRatesUpdated,
 
     // Actions
     setMode,

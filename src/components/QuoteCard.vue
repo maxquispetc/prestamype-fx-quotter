@@ -32,6 +32,14 @@
         </button>
       </div>
 
+      <!-- Notificación de tasas actualizadas -->
+      <div
+        v-if="showRatesUpdated"
+        class="mb-4 p-3 bg-green-50 border border-green-200 rounded-lg text-center"
+      >
+        <p class="text-green-600 text-sm font-medium">Tasas actualizadas</p>
+      </div>
+
       <!-- Tasas normales -->
       <div v-else class="flex justify-between items-center">
         <!-- Dólar compra (activo cuando mode === 'USD_TO_PEN') -->
@@ -184,7 +192,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch, onMounted, onUnmounted } from "vue";
+import { ref, computed, onMounted, onUnmounted } from "vue";
 import { storeToRefs } from "pinia";
 import { useRatesStore } from "@/stores/rates";
 import { useConversionStore } from "@/stores/conversion";
@@ -194,7 +202,7 @@ import { formatAmount } from "@/services/number";
 const ratesStore = useRatesStore();
 const conversionStore = useConversionStore();
 const { purchase_price, sale_price, loading, error } = storeToRefs(ratesStore);
-const { mode, penInput, usdInput, result, hasResult } =
+const { mode, penInput, usdInput, result, hasResult, showRatesUpdated } =
   storeToRefs(conversionStore);
 
 // Referencias para manejo de foco
@@ -282,14 +290,6 @@ function handleSwap(): void {
   }, 100);
 }
 
-// Watcher para sincronizar cuando cambian las tasas
-watch(
-  () => [purchase_price.value, sale_price.value],
-  () => {
-    if (hasResult.value) {
-      conversionStore.syncWithRates();
-    }
-  },
-  { deep: true }
-);
+// Los watchers de tasas están en el store de conversión
+// La vista solo lee getters, no fuerza v-model ni modifica inputs del usuario
 </script>
