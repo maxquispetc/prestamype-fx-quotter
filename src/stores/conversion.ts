@@ -35,7 +35,9 @@ export const useConversionStore = defineStore("conversion", () => {
         return usdToPen(usdAmount, ratesStore.purchase_price, decimals.value);
       }
     } catch (error) {
-      console.warn("[ConversionStore] Error calculating result:", error);
+      if (import.meta.env.DEV) {
+        console.warn("[ConversionStore] Error calculating result:", error);
+      }
       return 0;
     }
   });
@@ -136,7 +138,9 @@ export const useConversionStore = defineStore("conversion", () => {
         setPenInput(formattedResult);
       }
     } catch (error) {
-      console.warn("[ConversionStore] Error syncing with rates:", error);
+      if (import.meta.env.DEV) {
+        console.warn("[ConversionStore] Error syncing with rates:", error);
+      }
     }
   }
 
@@ -195,7 +199,9 @@ export const useConversionStore = defineStore("conversion", () => {
         newPrice !== oldPrice &&
         oldPrice !== undefined
       ) {
-        console.log("[ConversionStore] Purchase price updated:", newPrice);
+        if (import.meta.env.DEV) {
+          console.log("[ConversionStore] Purchase price updated:", newPrice);
+        }
         showRatesUpdatedNotification();
       }
     }
@@ -210,7 +216,9 @@ export const useConversionStore = defineStore("conversion", () => {
         newPrice !== oldPrice &&
         oldPrice !== undefined
       ) {
-        console.log("[ConversionStore] Sale price updated:", newPrice);
+        if (import.meta.env.DEV) {
+          console.log("[ConversionStore] Sale price updated:", newPrice);
+        }
         showRatesUpdatedNotification();
       }
     }
@@ -220,9 +228,13 @@ export const useConversionStore = defineStore("conversion", () => {
     () => ratesStore.hasRates,
     (hasRates) => {
       if (hasRates) {
-        console.log("[ConversionStore] Rates are now available");
+        if (import.meta.env.DEV) {
+          console.log("[ConversionStore] Rates are now available");
+        }
       } else {
-        console.log("[ConversionStore] Rates are not available");
+        if (import.meta.env.DEV) {
+          console.log("[ConversionStore] Rates are not available");
+        }
       }
     }
   );
