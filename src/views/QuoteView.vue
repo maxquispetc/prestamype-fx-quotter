@@ -7,11 +7,11 @@
       class="md:flex-1 flex items-center justify-center pt-8 md:pt-12 px-0 md:px-12"
     >
       <div class="text-white text-center md:text-left">
-        <h1 class="text-4xl md:text-6xl font-bold mb-4">
+        <h1 class="text-4xl md:text-6xl font-medium mb-4">
           El mejor<br />
           tipo de cambio
         </h1>
-        <p class="text-xl md:text-2xl font-light mb-0 md:mb-0">
+        <p class="text-xl md:text-2xl font-normal mb-0 md:mb-0">
           para cambiar dólares y soles<br />
           online en Perú
         </p>
