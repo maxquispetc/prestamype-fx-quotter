@@ -202,17 +202,17 @@
           aria-label="Intercambiar monedas"
         >
           <svg
-            class="w-5 h-5 text-white"
+            class="w-8 h-8 text-white"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
+            stroke-width="1.5"
           >
             <path
               stroke-linecap="round"
               stroke-linejoin="round"
-              stroke-width="2.5"
-              d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"
-            ></path>
+              d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99"
+            />
           </svg>
         </button>
       </div>
