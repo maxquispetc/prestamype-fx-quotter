@@ -7,3 +7,44 @@
     font-family: "Rubik", sans-serif;
   }
 }
+
+@layer utilities {
+  /* Utilidades para etiquetas de tasas */
+  .text-rate-label {
+    @apply text-xs font-normal text-center align-middle;
+    line-height: 116%;
+    letter-spacing: 0%;
+  }
+
+  .text-rate-value {
+    @apply text-xs font-bold text-center align-middle;
+    line-height: 116%;
+    letter-spacing: 0%;
+  }
+
+  /* Utilidades para inputs */
+  .text-input {
+    @apply text-base font-normal;
+    line-height: 24px;
+    letter-spacing: 0%;
+  }
+
+  /* Utilidades para botones */
+  .btn-primary {
+    @apply text-base font-normal text-center px-4 py-2;
+    background: #6e46e6;
+    border: 1px solid #4a28af;
+    line-height: 24px;
+    letter-spacing: 0%;
+  }
+
+  /* Utilidades para bordes redondeados específicos */
+  .rounded-input {
+    border-radius: 6px;
+  }
+
+  .rounded-input-left {
+    border-top-left-radius: 6px;
+    border-bottom-left-radius: 6px;
+  }
+}
