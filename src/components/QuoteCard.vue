@@ -109,10 +109,10 @@
     <div class="relative mt-12 mb-14 max-w-[340px] w-full mx-auto">
       <!-- Input principal según el modo -->
       <div
-        class="flex items-center bg-white rounded-xl mb-4 border border-[#653fd9] overflow-hidden"
+        class="flex items-center bg-white rounded-xl mb-4 border border-[#6E46E6] overflow-hidden"
       >
         <div
-          class="bg-gray-100 px-4 py-5 rounded-l-xl flex items-center justify-center w-2/5"
+          class="bg-gray-100 px-4 py-3 rounded-l-xl flex items-center justify-center w-2/5"
         >
           <label
             :for="mode === 'PEN_TO_USD' ? 'soles-input' : 'dollars-input'"
@@ -122,7 +122,7 @@
           </label>
         </div>
 
-        <div class="text-right flex-1 px-4 py-2 min-w-0">
+        <div class="text-right flex-1 px-4 min-w-0">
           <p class="text-xs text-gray-500 mb-1">Envías</p>
 
           <div
@@ -156,10 +156,10 @@
 
       <!-- Input de salida (solo lectura) -->
       <div
-        class="flex items-center bg-white rounded-xl mt-4 border border-[#653fd9] overflow-hidden"
+        class="flex items-center bg-white rounded-xl mt-4 border border-[#6E46E6] overflow-hidden"
       >
         <div
-          class="bg-gray-100 px-4 py-5 rounded-l-xl flex items-center justify-center w-2/5"
+          class="bg-gray-100 px-4 py-3 rounded-l-xl flex items-center justify-center w-2/5"
         >
           <label
             :for="mode === 'PEN_TO_USD' ? 'dollars-output' : 'soles-output'"
@@ -169,7 +169,7 @@
           </label>
         </div>
 
-        <div class="text-right flex-1 px-4 py-2 min-w-0">
+        <div class="text-right flex-1 px-4 min-w-0">
           <p class="text-xs text-gray-500 mb-1">Recibes</p>
 
           <div class="flex items-center justify-end gap-1 min-w-0">
@@ -218,7 +218,15 @@
 
     <!-- Botón "Iniciar operación" -->
     <button
-      class="w-full max-w-[340px] mx-auto block bg-[#653fd9] text-white py-4 rounded-lg font-semibold text-lg shadow-md hover:bg-opacity-90 focus:outline-none focus:ring-2 focus:ring-[#653fd9] focus:ring-offset-2 transition-colors"
+      class="w-full max-w-[340px] mx-auto block bg-[#653fd9] text-white rounded-lg shadow-md hover:bg-opacity-90 focus:outline-none focus:ring-2 focus:ring-[#653fd9] focus:ring-offset-2 transition-colors"
+      style="
+        font-weight: 400;
+        font-size: 16px;
+        line-height: 24px;
+        letter-spacing: 0%;
+        text-align: center;
+        padding: 8px 16px 8px 16px;
+      "
     >
       Iniciar operación
     </button>
